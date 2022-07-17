@@ -1,0 +1,49 @@
+version: "3.7"
+services:
+    nginx-poli:
+        build:
+            context: .
+            dockerfile: nginx.dev.dockerfile
+            args:
+                AMBIENTE: "PRODUCCION"
+                APACHE: "www-data"
+                USER: ${USER}
+                CUSTOMUID: $CUSTOMUID
+                CUSTOMGID: $CUSTOMGID
+        container_name: nginx-poli
+        ports: 
+            - 80:80
+            - 443:443
+        depends_on:
+            - polimundo-prod 
+        networks: 
+            raul_network:
+                aliases: 
+                    - nginx-poli   
+    polimundo-prod:
+        build:
+            context: .
+            dockerfile: polimundo.prod.dockerfile
+            args:
+                AMBIENTE: "PRODUCCION"
+                APACHE: "www-data"
+                USER: ${USER}
+                CUSTOMUID: $CUSTOMUID
+                CUSTOMGID: $CUSTOMGID
+        container_name: polimundo-prod
+        volumes:
+            - ~/.ssh/:/root/.ssh/
+        environment:
+            - AMBIENTE=DESARROLLO  
+            - APACHE_DOCUMENT_ROOT=/var/www/public
+        networks: 
+            raul_network:
+                aliases: 
+                    - polimundo-prod    
+        tty: true
+networks: 
+    raul_network:
+        name: raul_net
+        driver: bridge
+        ipam:
+            driver: default 

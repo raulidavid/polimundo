@@ -1,6 +1,6 @@
 version: "3.7"
 services:
-    nginx-prod:
+    nginx-polimundo:
         build:
             context: .
             dockerfile: nginx.dev.dockerfile
@@ -10,7 +10,7 @@ services:
                 USER: ${USER}
                 CUSTOMUID: $CUSTOMUID
                 CUSTOMGID: $CUSTOMGID
-        container_name: nginx-prod
+        container_name: nginx-polimundo
         depends_on:
             - polimundo-prod
         ports: 
@@ -19,7 +19,7 @@ services:
         networks: 
             raul_network:
                 aliases: 
-                    - nginx-prod   
+                    - nginx-polimundo   
     polimundo-prod:
         image: polimundo/prod
         build:

@@ -14,8 +14,7 @@ services:
         depends_on:
             - polimundo-prod
         ports: 
-            - 80:80
-            - 443:443    
+            - 80:80  
         networks: 
             raul_network:
                 aliases: 

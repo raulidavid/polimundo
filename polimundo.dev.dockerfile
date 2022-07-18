@@ -39,7 +39,7 @@ COPY --chown=$APACHE:$APACHE ./ /var/www
 WORKDIR /var/www
 #USER $USER 
 RUN composer install
-RUN php artisan passport:keys
+#RUN php artisan passport:keys
 RUN php artisan storage:link
 #INICIA EL SERVICIO APACHE SE HACE ESTO EN VSCODE
 #php artisan serve --host=0.0.0.0 --port=8000

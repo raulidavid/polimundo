@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y apt-utils cron procps iputils-ping teln
 RUN curl -sL https://deb.nodesource.com/setup_16.x  | bash - 
 RUN apt-get install -y nodejs    
 #INSTALAR LIBRERIAS PHP
-RUN docker-php-ext-install soap gd ctype bcmath zip
+RUN docker-php-ext-install soap gd ctype bcmath pdo_mysql zip
 #INSTALAR POSTGRES PDO PARA PHP
 RUN apt-get install -y libpq-dev \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \

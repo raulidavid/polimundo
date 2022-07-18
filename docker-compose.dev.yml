@@ -18,7 +18,7 @@ services:
         networks: 
             raul_network:
                 aliases: 
-                    - nginx-polimundo   
+                    - nginx-polimundo
     polimundo-prod:
         image: polimundo/prod
         build:
@@ -31,6 +31,8 @@ services:
                 CUSTOMUID: ${CUSTOMUID}
                 CUSTOMGID: ${CUSTOMGID}
         container_name: polimundo-prod
+        depends_on:
+            - mysql-polimundo
         volumes:
             - ~/.ssh/:/root/.ssh/
         environment:
@@ -41,6 +43,27 @@ services:
                 aliases: 
                     - polimundo-prod    
         tty: true
+    mysql-polimundo:
+        build:
+            context: .
+            dockerfile: mysql.dev.dockerfile
+            args:
+                AMBIENTE: "PRODUCCION"
+                USER: ${USER}
+                CUSTOMUID: $CUSTOMUID
+                CUSTOMGID: $CUSTOMGID
+        container_name: mysql-polimundo
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: sandbox
+            MYSQL_USER: sandbox_user
+            MYSQL_PASSWORD: passpass
+        ports: 
+            - 3306:3306  
+        networks: 
+            raul_network:
+                aliases: 
+                    - mysql-polimundo    
 networks: 
     raul_network:
         name: raul_net

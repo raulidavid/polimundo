@@ -13,3 +13,4 @@ RUN echo "CUSTOMGID: ${CUSTOMGID}"
 RUN echo "APACHE: ${APACHE}"
 
 COPY ./deploy/mysql/my.cnf /etc/mysql/conf.d/my.cnf
+COPY ./deploy/mysql/init.sql  /docker-entrypoint-initdb.d/init.sql

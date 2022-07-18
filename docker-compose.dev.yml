@@ -54,6 +54,8 @@ services:
                 CUSTOMGID: $CUSTOMGID
         container_name: mysql-polimundo
         command: --init-file /deploy/mysql/000-create-databases.sql
+        volumes:
+            - './deploy/mysql:/docker-entrypoint-initdb.d'
         environment:
             MYSQL_ROOT_PASSWORD: root
         ports: 

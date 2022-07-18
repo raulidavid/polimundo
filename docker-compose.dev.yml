@@ -54,15 +54,20 @@ services:
                 CUSTOMGID: $CUSTOMGID
         container_name: mysql-polimundo
         volumes:
-            - '/deploy/mysql:/docker-entrypoint-initdb.d'
+            - db:/var/lib/mysql
+            - /deploy/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
         environment:
             MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: laravel
         ports: 
             - 3306:3306  
         networks: 
             raul_network:
                 aliases: 
-                    - mysql-polimundo    
+                    - mysql-polimundo   
+volumes:
+  db:
+    driver: local                     
 networks: 
     raul_network:
         name: raul_net

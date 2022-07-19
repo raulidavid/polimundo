@@ -1,24 +1,5 @@
 version: "3.7"
 services:
-    nginx-polimundo:
-        build:
-            context: .
-            dockerfile: nginx.dev.dockerfile
-            args:
-                AMBIENTE: "PRODUCCION"
-                APACHE: "www-data"
-                USER: ${USER}
-                CUSTOMUID: $CUSTOMUID
-                CUSTOMGID: $CUSTOMGID
-        container_name: nginx-polimundo
-        ports: 
-            - 80:80
-        depends_on:
-            - mysql-polimundo
-        networks: 
-            raul_network:
-                aliases: 
-                    - nginx-polimundo
     mysql-polimundo:
         build:
             context: .
@@ -37,8 +18,27 @@ services:
         networks: 
             raul_network:
                 aliases: 
-                    - mysql-polimundo   
-    polimundo-prod:
+                    - mysql-polimundo  
+    nginx-polimundo:
+        build:
+            context: .
+            dockerfile: nginx.dev.dockerfile
+            args:
+                AMBIENTE: "PRODUCCION"
+                APACHE: "www-data"
+                USER: ${USER}
+                CUSTOMUID: $CUSTOMUID
+                CUSTOMGID: $CUSTOMGID
+        container_name: nginx-polimundo
+        ports: 
+            - 80:80
+        depends_on:
+            - mysql-polimundo
+        networks: 
+            raul_network:
+                aliases: 
+                    - nginx-polimundo 
+    laravel-polimundo:
         depends_on:
             - mysql-polimundo
         build:
@@ -50,7 +50,7 @@ services:
                 USER: ${USER}
                 CUSTOMUID: $CUSTOMUID
                 CUSTOMGID: $CUSTOMGID
-        container_name: polimundo-prod
+        container_name: laravel-polimundo
         volumes:
             - ~/.ssh/:/root/.ssh/
         environment:
@@ -59,7 +59,7 @@ services:
         networks: 
             raul_network:
                 aliases: 
-                    - polimundo-prod    
+                    - laravel-polimundo    
         tty: true
 networks: 
     raul_network:

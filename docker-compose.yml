@@ -14,12 +14,33 @@ services:
         ports: 
             - 80:80
         depends_on:
-            - polimundo-prod 
+            - mysql-polimundo
         networks: 
             raul_network:
                 aliases: 
-                    - nginx-polimundo   
+                    - nginx-polimundo
+    mysql-polimundo:
+        build:
+            context: .
+            dockerfile: mysql.dev.dockerfile
+            args:
+                AMBIENTE: "PRODUCCION"
+                USER: ${USER}
+                CUSTOMUID: $CUSTOMUID
+                CUSTOMGID: $CUSTOMGID
+        container_name: mysql-polimundo
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: laravel
+        ports: 
+            - 3306:3306  
+        networks: 
+            raul_network:
+                aliases: 
+                    - mysql-polimundo   
     polimundo-prod:
+        depends_on:
+            - mysql-polimundo
         build:
             context: .
             dockerfile: polimundo.prod.dockerfile

@@ -1,5 +1,24 @@
 version: "3.7"
 services:
+    mysql-polimundo:
+        build:
+            context: .
+            dockerfile: mysql.dev.dockerfile
+            args:
+                AMBIENTE: "PRODUCCION"
+                USER: ${USER}
+                CUSTOMUID: $CUSTOMUID
+                CUSTOMGID: $CUSTOMGID
+        container_name: mysql-polimundo
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: laravel
+        ports: 
+            - 3306:3306  
+        networks: 
+            raul_network:
+                aliases: 
+                    - mysql-polimundo   
     nginx-polimundo:
         build:
             context: .
@@ -12,14 +31,19 @@ services:
                 CUSTOMGID: $CUSTOMGID
         container_name: nginx-polimundo
         depends_on:
-            - polimundo-prod
+            - mysql-polimundo
         ports: 
             - 80:80  
         networks: 
             raul_network:
                 aliases: 
-                    - nginx-polimundo
+                    - nginx-polimundo             
     polimundo-prod:
+        depends_on:
+            nginx-polimundo:
+                condition: service_healthy
+            mysql-polimundo:
+                condition: service_healthy
         image: polimundo/prod
         build:
             context: .
@@ -31,8 +55,6 @@ services:
                 CUSTOMUID: ${CUSTOMUID}
                 CUSTOMGID: ${CUSTOMGID}
         container_name: polimundo-prod
-        depends_on:
-            - mysql-polimundo
         volumes:
             - ~/.ssh/:/root/.ssh/
         environment:
@@ -42,32 +64,7 @@ services:
             raul_network:
                 aliases: 
                     - polimundo-prod    
-        tty: true
-    mysql-polimundo:
-        build:
-            context: .
-            dockerfile: mysql.dev.dockerfile
-            args:
-                AMBIENTE: "PRODUCCION"
-                USER: ${USER}
-                CUSTOMUID: $CUSTOMUID
-                CUSTOMGID: $CUSTOMGID
-        container_name: mysql-polimundo
-        volumes:
-            - db:/var/lib/mysql
-            - /deploy/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
-        environment:
-            MYSQL_ROOT_PASSWORD: root
-            MYSQL_DATABASE: laravel
-        ports: 
-            - 3306:3306  
-        networks: 
-            raul_network:
-                aliases: 
-                    - mysql-polimundo   
-volumes:
-  db:
-    driver: local                     
+        tty: true                
 networks: 
     raul_network:
         name: raul_net

@@ -40,6 +40,7 @@ WORKDIR /var/www
 #USER $USER 
 RUN composer install
 #RUN php artisan passport:keys
+RUN php artisan key:generate
 RUN php artisan storage:link
 RUN php artisan migrate
 RUN php artisan db:seed

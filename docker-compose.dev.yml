@@ -19,6 +19,11 @@ services:
             polimundo_network:
                 aliases: 
                     - mysql-polimundo
+        healthcheck:
+            test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-uroot", "-proot"]
+            interval: 5s
+            timeout: 5s
+            retries: 20
     nginx-polimundo:
         build:
             context: .
@@ -57,7 +62,10 @@ services:
             polimundo_network:
                 aliases: 
                     - laravel-polimundo    
-        tty: true           
+        tty: true
+        depends_on:
+            mysql-polimundo:
+                condition: service_healthy
 networks: 
     polimundo_network:
         name: polimundo_net

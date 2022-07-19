@@ -43,7 +43,7 @@ RUN composer install
 RUN php artisan config:clear
 RUN php artisan key:generate
 RUN php artisan storage:link
-#RUN php artisan migrate
+RUN php artisan migrate
 #RUN php artisan db:seed
 #INICIA EL SERVICIO APACHE SE HACE ESTO EN VSCODE
 #php artisan serve --host=0.0.0.0 --port=8000

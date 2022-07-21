@@ -1,5 +1,50 @@
 version: "3.7"
 services:
+    nginx-polimundo:
+        build:
+            context: .
+            dockerfile: nginx.dev.dockerfile
+            args:
+                AMBIENTE: "PRODUCCION"
+                APACHE: "www-data"
+                USER: ${USER}
+                CUSTOMUID: $CUSTOMUID
+                CUSTOMGID: $CUSTOMGID
+        container_name: nginx-polimundo
+        ports: 
+            - 80:80  
+        networks: 
+            polimundo_network:
+                aliases: 
+                    - nginx-polimundo 
+        depends_on:
+            mysql-polimundo:
+                condition: service_healthy           
+    laravel-polimundo:
+        image: laravel/polimundo
+        build:
+            context: .
+            dockerfile: polimundo.dev.dockerfile
+            args:
+                AMBIENTE: "PRODUCCION"
+                APACHE: "www-data"
+                USER: ${USER}
+                CUSTOMUID: ${CUSTOMUID}
+                CUSTOMGID: ${CUSTOMGID}    
+        depends_on:
+            mysql-polimundo:
+                condition: service_healthy
+        container_name: laravel-polimundo
+        volumes:
+            - ~/.ssh/:/root/.ssh/
+        environment:
+            - AMBIENTE=DESARROLLO  
+            - APACHE_DOCUMENT_ROOT=/var/www/public 
+        networks: 
+            polimundo_network:
+                aliases: 
+                    - laravel-polimundo    
+        tty: true
     mysql-polimundo:
         build:
             context: .
@@ -21,51 +66,9 @@ services:
                     - mysql-polimundo
         healthcheck:
             test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-uroot", "-proot"]
-            interval: 5s
-            timeout: 5s
-            retries: 20
-    nginx-polimundo:
-        build:
-            context: .
-            dockerfile: nginx.dev.dockerfile
-            args:
-                AMBIENTE: "PRODUCCION"
-                APACHE: "www-data"
-                USER: ${USER}
-                CUSTOMUID: $CUSTOMUID
-                CUSTOMGID: $CUSTOMGID
-        container_name: nginx-polimundo
-        ports: 
-            - 80:80  
-        networks: 
-            polimundo_network:
-                aliases: 
-                    - nginx-polimundo             
-    laravel-polimundo:
-        image: laravel/polimundo
-        build:
-            context: .
-            dockerfile: polimundo.dev.dockerfile
-            args:
-                AMBIENTE: "PRODUCCION"
-                APACHE: "www-data"
-                USER: ${USER}
-                CUSTOMUID: ${CUSTOMUID}
-                CUSTOMGID: ${CUSTOMGID}
-        container_name: laravel-polimundo
-        volumes:
-            - ~/.ssh/:/root/.ssh/
-        environment:
-            - AMBIENTE=DESARROLLO  
-            - APACHE_DOCUMENT_ROOT=/var/www/public 
-        networks: 
-            polimundo_network:
-                aliases: 
-                    - laravel-polimundo    
-        tty: true
-        depends_on:
-            mysql-polimundo:
-                condition: service_healthy
+            interval: 1m
+            timeout: 10s
+            retries: 5
 networks: 
     polimundo_network:
         name: polimundo_net

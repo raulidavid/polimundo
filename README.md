@@ -24,9 +24,7 @@ Laravel is accessible, powerful, and provides tools required for large, robust a
 ## DEVELOP
 
 ```sh
-git clone git@gitlab.com:raulidavid/SIEC.git
-cd SIEC
-git checkout develop
-cp .env.develop .env
+git clone https://github.com/raulidavid/polimundo.git
+cd polimundo
 CUSTOMUID=$(id -u) CUSTOMGID=$(id -g) docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build -d --remove-orphans
 ```
